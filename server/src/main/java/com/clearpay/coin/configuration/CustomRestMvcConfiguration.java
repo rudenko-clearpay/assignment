@@ -1,5 +1,7 @@
 package com.clearpay.coin.configuration;
 
+import com.clearpay.coin.model.User;
+import com.clearpay.coin.model.Wallet;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
@@ -16,7 +18,8 @@ class CustomRestMvcConfiguration {
 
             @Override
             public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors) {
-                cors.addMapping("http://localhost:8081/*");
+                cors.addMapping("/**").allowedOrigins("http://localhost:3000");
+                config.exposeIdsFor(User.class, Wallet.class);
             }
         };
     }

@@ -8,9 +8,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
+import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 
 @Configuration
-public class RepositoryConfiguration extends AbstractMongoClientConfiguration {
+public class RepositoryConfiguration extends AbstractMongoClientConfiguration implements RepositoryRestConfigurer {
 
     @Value("${spring.data.mongodb.host}")
     private String host;
