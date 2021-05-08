@@ -45,6 +45,7 @@ class TransactionControllerTest {
     }
 
     @Test
+    @DisplayName("Success transaction should return updated user entities")
     public void successTransactionResponse() throws JsonProcessingException {
         List<User> expected = List.of(new User());
 
