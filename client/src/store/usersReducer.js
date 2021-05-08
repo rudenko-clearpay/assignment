@@ -1,6 +1,6 @@
 import {LOAD_USERS, UPDATE_USERS} from "./actionTypes"
 
-const initialState = {data: new Map(), page: null}
+export const userReducerInitialState = {data: new Map(), page: null}
 
 function flattenUsersArray(state, users) {
     let flattened = state.data;
@@ -12,7 +12,7 @@ function flattenUsersArray(state, users) {
     return flattened;
 }
 
-export const usersReducer = (state = initialState, action) => {
+export const usersReducer = (state = userReducerInitialState, action) => {
     switch (action.type) {
         case LOAD_USERS: {
             const users = action.payload.data;
@@ -25,7 +25,7 @@ export const usersReducer = (state = initialState, action) => {
         }
         case UPDATE_USERS: {
             const users = action.payload.data;
-            debugger
+
             const flattened = flattenUsersArray(state, users);
             return {
                 ...state,

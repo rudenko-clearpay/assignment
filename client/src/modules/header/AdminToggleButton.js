@@ -17,7 +17,8 @@ const AdminToggleButton = () => {
     return (
         <ToggleButton type="checkbox" variant={isAdmin ? "success" : "secondary"} checked={isAdmin}
                       onChange={handleChange} value="1"
-                      className="mr-sm-2">
+                      className="mr-sm-2"
+                      id="admin_toggle_btn">
             Admin mode
         </ToggleButton>
     )

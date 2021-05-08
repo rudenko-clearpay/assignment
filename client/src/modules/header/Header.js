@@ -17,8 +17,8 @@ const Header = () => {
             <Navbar.Toggle aria-controls="basic-navbar-nav"/>
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="mr-auto">
-                    <Nav.Link><div  onClick={getNavigationHandler("/home")}>Home</div></Nav.Link>
-                    <Nav.Link onClick={getNavigationHandler("/users")}>Users</Nav.Link>
+                    <Nav.Link id="home_nav_link" onClick={getNavigationHandler("/home")}>Home</Nav.Link>
+                    <Nav.Link id="users_nav_link" onClick={getNavigationHandler("/users")}>Users</Nav.Link>
                 </Nav>
                 <Form inline>
                     <ButtonGroup toggle className="mb-2">

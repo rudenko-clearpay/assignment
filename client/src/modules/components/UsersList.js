@@ -29,15 +29,15 @@ const UsersList = () => {
     function getUsers() {
         let usersList = [];
         reduxData.users.forEach((user) => {
-            return usersList.push(<UserRow user={user}/>);
+            return usersList.push(<UserRow user={user} key={"User_row_" + user.id}/>);
         })
         return usersList.length ? usersList : noUsersStub;
     }
 
     return (
         <div>
-            <h2>Showing {reduxData.users.size} of {reduxData.page.totalElements} users</h2>
-            <Accordion>
+            <h2 id="users_list_header">Showing {reduxData.users.size} of {reduxData.page.totalElements} users</h2>
+            <Accordion id={"users_list"}>
                 {getUsers()}
             </Accordion>
         </div>

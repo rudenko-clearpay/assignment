@@ -32,7 +32,7 @@ const TransferSection = (props) => {
         if (response.status === 200) {
             dispatch(updateUsers(response))
         } else {
-            debugger
+
             setErrors(response.data.errors);
         }
     }
