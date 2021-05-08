@@ -29,7 +29,6 @@ const UsersList = () => {
     function getUsers() {
         let usersList = [];
         reduxData.users.forEach((user) => {
-            debugger
             return usersList.push(<UserRow user={user}/>);
         })
         return usersList.length ? usersList : noUsersStub;
@@ -39,15 +38,6 @@ const UsersList = () => {
         <div>
             <h2>Showing {reduxData.users.size} of {reduxData.page.totalElements} users</h2>
             <Accordion>
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>User name</th>
-                    <th>Wallets</th>
-                    <th>Total balance</th>
-                    <th> </th>
-                </tr>
-                </thead>
                 {getUsers()}
             </Accordion>
         </div>

@@ -1,18 +1,27 @@
 package com.clearpay.coin.model;
 
+import com.clearpay.coin.validation.StringRepresentsDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransactionRequest {
-    String fromUser;
-    String toUser;
+    @NotBlank(message = "Origin user is required")
+    String senderId;
 
-    String fromWallet;
-    String toWallet;
+    @NotBlank(message = "Origin wallet id is required")
+    String senderWalletId;
 
-    long amount;
+    @NotBlank(message = "Destination wallet id is required")
+    String recipientWalletId;
+
+    @NotBlank(message = "Transfer amount is required")
+    @StringRepresentsDecimal(message = "Need to provide a valid decimal number")
+    String amount;
 }

@@ -1,10 +1,10 @@
-import {LOAD_USERS, UPDATE_USER} from './actionTypes'
+import {LOAD_USERS, UPDATE_USERS} from './actionTypes'
 
 export const loadUsers = content => ({
     type: LOAD_USERS,
     payload: content
 })
-export const updateUser = content => ({
-    type: UPDATE_USER,
+export const updateUsers = content => ({
+    type: UPDATE_USERS,
     payload: content
 })

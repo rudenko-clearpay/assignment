@@ -5,14 +5,17 @@ import com.clearpay.coin.exceptions.NotFoundException;
 import com.clearpay.coin.model.TransactionRequest;
 import com.clearpay.coin.model.User;
 import com.clearpay.coin.model.Wallet;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
+@Slf4j
 public class TransactionRepositoryImpl implements TransactionRepository {
+    private static final int MAX_RETRIES = 3;
     private final UserRepository userRepository;
 
     public TransactionRepositoryImpl(UserRepository userRepository) {
@@ -20,28 +23,50 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     }
 
     @Override
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<User> perform(TransactionRequest transactionRequest) {
-        User fromUser = findUser(transactionRequest.getFromUser());
-        Wallet walletFrom = findWallet(fromUser, transactionRequest.getFromWallet());
+        return perform(transactionRequest, 0);
+    }
 
-        if (walletFrom.getBalance() - transactionRequest.getAmount() < 0) {
-            throw new LowBalanceException("Wallet '" + transactionRequest.getFromWallet() + "' has insufficient balance for the transaction.");
+    public List<User> perform(TransactionRequest transactionRequest, int retry) {
+        User fromUser = findUser(transactionRequest.getSenderId());
+        Wallet senderWallet = findWallet(fromUser, transactionRequest.getSenderWalletId());
+        BigDecimal transferAmount = new BigDecimal(transactionRequest.getAmount());
+        BigDecimal newSenderBalance = new BigDecimal(senderWallet.getBalance()).subtract(transferAmount);
+
+        if (newSenderBalance.floatValue() < 0) {
+            throw new LowBalanceException("Wallet '" + transactionRequest.getSenderWalletId() + "' has insufficient balance for the transaction.");
         }
 
-        boolean isSameUser = transactionRequest.getFromUser().equals(transactionRequest.getToUser());
-        User toUser = isSameUser ? fromUser : findUser(transactionRequest.getToUser());
-        Wallet walletTo = findWallet(toUser, transactionRequest.getToWallet());
+        boolean isSameUser = fromUser.getWallets().stream().anyMatch(wallet -> wallet.getId().equals(transactionRequest.getRecipientWalletId()));
+        User toUser = isSameUser ? fromUser : findUserByWalletId(transactionRequest.getRecipientWalletId());
 
-        walletFrom.setBalance(walletFrom.getBalance() - transactionRequest.getAmount());
-        walletTo.setBalance(walletTo.getBalance() + transactionRequest.getAmount());
+        Wallet recipientWallet = findWallet(toUser, transactionRequest.getRecipientWalletId());
+        String newRecipientBalance = new BigDecimal(recipientWallet.getBalance()).add(transferAmount).stripTrailingZeros().toPlainString();
 
-        return userRepository.saveAll(isSameUser ? List.of(fromUser) : List.of(fromUser, toUser));
+        senderWallet.setBalance(newSenderBalance.stripTrailingZeros().toPlainString());
+        recipientWallet.setBalance(newRecipientBalance);
+
+        try {
+            return userRepository.saveAll(isSameUser ? List.of(fromUser) : List.of(fromUser, toUser));
+        } catch (OptimisticLockingFailureException e) {
+            log.info("Failed to update, trying again. Retry #{}", retry + 1);
+            if (retry < MAX_RETRIES) {
+                return perform(transactionRequest, retry + 1);
+            } else {
+                throw new IllegalStateException("Failed to update. Can't retrieve lock");
+            }
+        }
     }
 
     private Wallet findWallet(User user, String walletId) {
-        return user.getWallets().stream().filter(w -> w.getId().equals(walletId)).findFirst()
+        return user.getWallets().stream()
+                .filter(w -> w.getId().equals(walletId)).findFirst()
                 .orElseThrow(() -> new NotFoundException("Wallet with id " + walletId + " was not found."));
+    }
+
+    private User findUserByWalletId(String walletId) {
+        return userRepository.findByWallets_Id(walletId).stream().findFirst()
+                .orElseThrow(() -> new NotFoundException("User with wallet " + walletId + " was not found."));
     }
 
     private User findUser(String user) {
