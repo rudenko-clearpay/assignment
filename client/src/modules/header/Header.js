@@ -1,10 +1,10 @@
-import React, {useState} from 'react'
-import {ButtonGroup, Form, Nav, Navbar, ToggleButton} from 'react-bootstrap';
+import React from 'react'
+import {ButtonGroup, Form, Nav, Navbar} from 'react-bootstrap';
 import {useHistory} from "react-router-dom";
+import AdminToggleButton from "./AdminToggleButton";
 
 
 const Header = () => {
-    const [isAdmin, setIsAdmin] = useState(false);
     const history = useHistory();
 
     function getNavigationHandler(path) {
@@ -22,11 +22,7 @@ const Header = () => {
                 </Nav>
                 <Form inline>
                     <ButtonGroup toggle className="mb-2">
-                        <ToggleButton type="checkbox" variant={isAdmin ? "success" : "secondary"} checked={isAdmin}
-                                      onChange={(e) => setIsAdmin(e.currentTarget.checked)} value="1"
-                                      className="mr-sm-2">
-                            Admin mode
-                        </ToggleButton>
+                        <AdminToggleButton/>
                     </ButtonGroup>
                 </Form>
             </Navbar.Collapse>

@@ -1,6 +1,6 @@
 import React from 'react'
 import {Accordion, Card} from "react-bootstrap";
-import Wallet from "./Wallets";
+import Wallet from "./wallet/Wallets";
 
 
 const UserRow = (props) => {
