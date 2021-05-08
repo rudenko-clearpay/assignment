@@ -1,18 +1,25 @@
 version: "3"
 services:
 
-#  server:
-#    build:
-#      context: ./server
-#    ports:
-#      - "8080:8080"
-#    container_name: server
-#    links:
-#      - mongo
-#    depends_on:
-#      - mongo
-#    networks:
-#      - shared-net
+  server:
+    build:
+      context: ./server
+    ports:
+      - "8080:8080"
+    container_name: server
+    links:
+      - mongo
+    depends_on:
+      - mongo
+    networks:
+      - shared-net
+  client:
+    container_name: client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - '3000:80'
 
   mongo:
     image: 'mongo'
@@ -23,6 +30,12 @@ services:
       - /home/sinoed/data/db:/data/db
     networks:
       - shared-net
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/clearpay_coin --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
 
 networks:
   shared-net:

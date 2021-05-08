@@ -1,4 +1,7 @@
 spring:
   data:
     mongodb:
-      host: 'docker'
+      host: 'mongo'
+
+server:
+  port: 8080

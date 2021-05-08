@@ -1,3 +1,4 @@
+
 spring:
   data:
     mongodb:
@@ -7,3 +8,5 @@ spring:
     rest:
       return-body-on-create: true
       return-body-on-update: true
+server:
+  port: 8081

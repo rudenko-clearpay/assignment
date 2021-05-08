@@ -18,7 +18,8 @@ class CustomRestMvcConfiguration {
 
             @Override
             public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors) {
-                cors.addMapping("/**").allowedOrigins("http://localhost:3000");
+                cors.addMapping("/**")
+                        .allowedOrigins("http://localhost:3000");
                 config.exposeIdsFor(User.class, Wallet.class);
             }
         };
