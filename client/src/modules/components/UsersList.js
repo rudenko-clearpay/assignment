@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect} from 'react'
 import {useDispatch, useSelector} from 'react-redux';
 import {loadUsers as fetchUsers} from "../../api/users";
 import {loadUsers} from "../../store/actions";
-import {Accordion, ListGroup, Table} from "react-bootstrap";
+import {Accordion, ListGroup} from "react-bootstrap";
 import UserRow from "./UserRow";
 
 const noUsersStub = <ListGroup.Item>No users found</ListGroup.Item>;

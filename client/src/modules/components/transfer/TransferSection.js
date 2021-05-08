@@ -1,4 +1,4 @@
-import {Card, Col, Form, Jumbotron, Row} from "react-bootstrap";
+import {Card, Col, Form} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import {useState} from "react";
 import {transfer} from "../../../api/transfers";

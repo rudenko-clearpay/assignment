@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {Navbar, Nav, Form, ToggleButton, ButtonGroup} from 'react-bootstrap';
+import {ButtonGroup, Form, Nav, Navbar, ToggleButton} from 'react-bootstrap';
 import {useHistory} from "react-router-dom";
 
 

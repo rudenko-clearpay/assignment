@@ -1,6 +1,5 @@
 import React from 'react'
-import {Accordion, Card, Nav} from "react-bootstrap";
-import Button from "react-bootstrap/Button";
+import {Accordion, Card} from "react-bootstrap";
 import Wallet from "./Wallets";
 
 

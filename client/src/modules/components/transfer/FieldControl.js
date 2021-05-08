@@ -1,4 +1,4 @@
-import {Alert, Col, Form} from "react-bootstrap";
+import {Col, Form} from "react-bootstrap";
 
 
 export default (props) => {
