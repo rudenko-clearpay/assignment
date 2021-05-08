@@ -1,7 +1,7 @@
 import {Col, Form} from "react-bootstrap";
 
 
-export default (props) => {
+const FieldControl = (props) => {
 
     const {placeholder, onChange, fieldName, errors} = props;
 
@@ -23,3 +23,5 @@ export default (props) => {
         </Col>
     );
 }
+
+export default FieldControl;

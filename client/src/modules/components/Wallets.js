@@ -3,7 +3,7 @@ import {Card, Nav} from "react-bootstrap";
 import TransferSection from "./transfer/TransferSection";
 
 
-export default (props) => {
+const Wallets = (props) => {
     const {user} = props;
     const wallets = user.wallets;
     const [activeWalletId, setActiveWalletId] = useState(wallets.length ? wallets[0].id : undefined);
@@ -23,7 +23,7 @@ export default (props) => {
 
     useEffect(() => {
         setActiveWallet(wallets.filter(w => w.id === activeWalletId)[0] || {});
-    })
+    }, [wallets, activeWalletId])
 
     return (
         <Card key={"wallet_card_" + user.id}>
@@ -41,3 +41,5 @@ export default (props) => {
             </Card.Body>
         </Card>);
 }
+
+export default Wallets;

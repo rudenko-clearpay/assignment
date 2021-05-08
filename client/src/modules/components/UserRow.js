@@ -3,7 +3,7 @@ import {Accordion, Card} from "react-bootstrap";
 import Wallet from "./Wallets";
 
 
-export default (props) => {
+const UserRow = (props) => {
     const {user} = props;
     return (<Card key={"card_" + user.id}>
         <Accordion.Toggle as={Card.Header} variant="link" key={"toggle_i_" + user.id} eventKey={user.id}>
@@ -14,3 +14,5 @@ export default (props) => {
         </Accordion.Collapse>
     </Card>);
 }
+
+export default UserRow;

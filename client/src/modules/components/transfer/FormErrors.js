@@ -1,6 +1,6 @@
 import {Alert, Col, Row} from "react-bootstrap";
 
-export default (props) => {
+const FormErrors = (props) => {
     const {formErrors = []} = props;
     return (<Row>
             <Col>
@@ -11,3 +11,5 @@ export default (props) => {
         </Row>
     );
 }
+
+export default FormErrors;

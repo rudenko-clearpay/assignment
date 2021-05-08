@@ -8,7 +8,7 @@ import FieldControl from "./FieldControl";
 import FormErrors from "./FormErrors";
 
 
-export default (props) => {
+const TransferSection = (props) => {
     const {user, originWallet} = props;
     const [recipientWalletId, setRecipientWalletId] = useState();
     const [amount, setAmount] = useState();
@@ -74,3 +74,5 @@ export default (props) => {
         </Card>
     );
 }
+
+export default TransferSection;
