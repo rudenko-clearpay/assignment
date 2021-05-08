@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 @Slf4j
 public class TransactionRepositoryImpl implements TransactionRepository {
-    private static final int MAX_RETRIES = 3;
+    public static final int MAX_RETRIES = 3;
     private final UserRepository userRepository;
 
     public TransactionRepositoryImpl(UserRepository userRepository) {
@@ -61,16 +61,16 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     private Wallet findWallet(User user, String walletId) {
         return user.getWallets().stream()
                 .filter(w -> w.getId().equals(walletId)).findFirst()
-                .orElseThrow(() -> new NotFoundException("Wallet with id " + walletId + " was not found."));
+                .orElseThrow(() -> new NotFoundException("Wallet with id '" + walletId + "' was not found."));
     }
 
     private User findUserByWalletId(String walletId) {
         return userRepository.findByWallets_Id(walletId).stream().findFirst()
-                .orElseThrow(() -> new NotFoundException("User with wallet " + walletId + " was not found."));
+                .orElseThrow(() -> new NotFoundException("User with wallet '" + walletId + "' was not found."));
     }
 
     private User findUser(String user) {
         return userRepository.findById(user)
-                .orElseThrow(() -> new NotFoundException("User with id " + user + " was not found."));
+                .orElseThrow(() -> new NotFoundException("User with id '" + user + "' was not found."));
     }
 }
