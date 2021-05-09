@@ -5,11 +5,13 @@ import com.clearpay.coin.exceptions.NotFoundException;
 import com.clearpay.coin.model.TransactionRequest;
 import com.clearpay.coin.model.User;
 import com.clearpay.coin.repository.TransactionRepository;
+import com.clearpay.coin.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -32,6 +34,8 @@ class TransactionControllerTest {
 
     @MockBean
     private TransactionRepository repository;
+    @MockBean
+    private UserRepository userRepository;
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -40,6 +44,7 @@ class TransactionControllerTest {
 
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.openMocks(this);
         URL = "http://localhost:" + port + "/transaction";
         when(repository.perform(any())).thenReturn(List.of(new User()));
     }

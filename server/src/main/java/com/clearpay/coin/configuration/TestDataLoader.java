@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Component
-@Profile("test")
+@Profile("e2e-testing")
 @Slf4j
 public class TestDataLoader implements ApplicationListener<ApplicationReadyEvent> {
     public static final int MIN_WALLETS = 1;

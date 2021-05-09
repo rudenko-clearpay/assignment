@@ -52,7 +52,7 @@ class TransactionRepositoryImplTest {
     @DisplayName("Transaction passes fine")
     void testTransactionOK() {
         when(userRepository.findById(USER_ID_1)).thenReturn(Optional.of(user1));
-        when(userRepository.findById(USER_ID_2)).thenReturn(Optional.of(user2));
+        when(userRepository.findByWallets_Id(WALLET_U2_2)).thenReturn(List.of(user2));
 
         transactionRepository.perform(new TransactionRequest(USER_ID_1, WALLET_U1_2, WALLET_U2_2, "100"));
         assertThat(user1.getWallets().get(1).getBalance()).isEqualTo("1900");
@@ -95,7 +95,7 @@ class TransactionRepositoryImplTest {
         Executable operation = () -> transactionRepository.perform(new TransactionRequest(USER_ID_1, WALLET_U1_2, WALLET_U2_2, "100"));
         NotFoundException exception = assertThrows(NotFoundException.class,  operation);
 
-        assertThat(exception.getMessage()).isEqualTo("User with id " + USER_ID_1 + " was not found.");
+        assertThat(exception.getMessage()).isEqualTo("User with id '" + USER_ID_1 + "' was not found.");
     }
 
     @Test
@@ -107,7 +107,7 @@ class TransactionRepositoryImplTest {
         Executable operation = () -> transactionRepository.perform(new TransactionRequest(USER_ID_1, WALLET_U1_2, WALLET_U2_2, "100"));
         NotFoundException exception = assertThrows(NotFoundException.class,  operation);
 
-        assertThat(exception.getMessage()).isEqualTo("Wallet with id " + WALLET_U1_2 + " was not found.");
+        assertThat(exception.getMessage()).isEqualTo("Wallet with id '" + WALLET_U1_2 + "' was not found.");
     }
 
     @Test
@@ -119,7 +119,7 @@ class TransactionRepositoryImplTest {
         Executable operation = () -> transactionRepository.perform(new TransactionRequest(USER_ID_1, WALLET_U1_2, WALLET_U2_2, "100"));
         NotFoundException exception = assertThrows(NotFoundException.class,  operation);
 
-        assertThat(exception.getMessage()).isEqualTo("Wallet with id " + WALLET_U2_2 + " was not found.");
+        assertThat(exception.getMessage()).isEqualTo("User with wallet '" + WALLET_U2_2 + "' was not found.");
     }
 
     @Test
@@ -131,6 +131,6 @@ class TransactionRepositoryImplTest {
         Executable operation = () -> transactionRepository.perform(new TransactionRequest(USER_ID_1, WALLET_U1_2, WALLET_U2_2, "100"));
         NotFoundException exception = assertThrows(NotFoundException.class,  operation);
 
-        assertThat(exception.getMessage()).isEqualTo("User with id " + USER_ID_2 + " was not found.");
+        assertThat(exception.getMessage()).isEqualTo("User with wallet '" + WALLET_U2_2 + "' was not found.");
     }
 }
