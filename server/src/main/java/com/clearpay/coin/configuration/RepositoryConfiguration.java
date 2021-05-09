@@ -37,5 +37,8 @@ public class RepositoryConfiguration extends AbstractMongoClientConfiguration im
         return database;
     }
 
-
+    @Override
+    protected boolean autoIndexCreation() {
+        return true;
+    }
 }
