@@ -31,7 +31,7 @@ jobs:
         uses: cicirello/jacoco-badge-generator@v2
         with:
           generate-branches-badge: true
-          jacoco-csv-file: coverage_report/jacoco.csv
+          jacoco-csv-file: server/coverage_report/jacoco.csv
       - name: Commit the badge (if it changed)
         run: |
           if [[ `git status --porcelain` ]]; then
