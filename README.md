@@ -1,12 +1,12 @@
 [![Java CI with Maven](https://github.com/rudenko-clearpay/assignment/actions/workflows/build-artifacts.yml/badge.svg)](https://github.com/rudenko-clearpay/assignment/actions/workflows/build-artifacts.yml)
 [![Coverage](.github/badges/jacoco.svg)](https://github.com/rudenko-clearpay/assignment/actions/workflows/build-artifacts.yml)
 
-##Run within docker-compose:
+## Run within docker-compose:
 ```
 docker-compose up
 ```
 
-##Run locally:
+## Run locally:
 ```
 1. Install and run MongoDB locally
 2. cd server
