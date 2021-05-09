@@ -16,8 +16,7 @@ const Routes = () => {
             <Route path="/users">
                 <UsersPage />
             </Route>
-            <PrivateRoute path="/transfer" component={TransferPage}>
-            </PrivateRoute>
+            <PrivateRoute path="/transfer" component={TransferPage}/>
             <Route path="*">
                 <div>No match found</div>
             </Route>
