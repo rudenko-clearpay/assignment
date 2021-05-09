@@ -1,30 +1,19 @@
-import React, {useEffect} from 'react'
-import {useDispatch, useSelector} from 'react-redux';
-import {loadUsers as fetchUsers} from "../../api/users";
-import {loadUsers} from "../../store/actions";
+import React from 'react'
+import {useSelector} from 'react-redux';
 import {Accordion, ListGroup} from "react-bootstrap";
 import UserRow from "./UserRow";
+import LoadMore from "./LoadMore";
 
 const noUsersStub = <ListGroup.Item>No users found</ListGroup.Item>;
 
-const UsersList = () => {
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        reduxData.users.size || fetchUsers(reduxData.page)
-            .then(response => dispatch(loadUsers(response)))
-            .catch(e => console.log("Failed to load users", e));
-    }, [])
-
-
-
+const UsersList = (props) => {
+    const {loadUsersFunc} = props;
     const reduxData = useSelector(state => {
         return {
             users: state.users.data || new Map(),
-            page: state.users.page || {totalElements: 0, page: 0}
+            page: state.users.page || {totalPages: 0, number: 0}
         }
     });
-
 
     function getUsers() {
         let usersList = [];
@@ -39,6 +28,7 @@ const UsersList = () => {
             <h2 id="users_list_header">Showing {reduxData.users.size} of {reduxData.page.totalElements} users</h2>
             <Accordion id={"users_list"}>
                 {getUsers()}
+                {<LoadMore onClick={loadUsersFunc}/>}
             </Accordion>
         </div>
 

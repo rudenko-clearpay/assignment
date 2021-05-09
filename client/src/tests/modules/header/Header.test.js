@@ -33,7 +33,7 @@ it("Header links change pages", () => {
                 </MemoryRouter>
             </Provider>, container);
     });
-    expect(container.textContent).toContain("Content");
+    expect(container.textContent).toContain("Welcome to the ClearPay Coin!");
 
 
     act(() => {
@@ -60,7 +60,7 @@ it("Admin btn click dispatches event", () => {
                 </MemoryRouter>
             </Provider>, container);
     });
-    expect(container.textContent).toContain("Content");
+    expect(container.textContent).toContain("Welcome to the ClearPay Coin!");
 
 
     act(() => {

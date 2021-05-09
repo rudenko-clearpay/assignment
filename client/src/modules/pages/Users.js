@@ -13,14 +13,19 @@ const Users = () => {
     });
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        reduxData.users || fetchUsers(reduxData.page)
+    const loadUsersFromApi = () => {
+        const nextPage = reduxData.page ? reduxData.page.number + 1 : 0;
+        fetchUsers(nextPage)
             .then(response => dispatch(loadUsers(response)))
             .catch(e => console.log("Failed to load users", e));
+    }
+
+    useEffect(() => {
+        reduxData.users.length || loadUsersFromApi();
     }, []);
 
     return (
-        <UsersList/>
+        <UsersList loadUsersFunc={loadUsersFromApi}/>
     )
 }
 
