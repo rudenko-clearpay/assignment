@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TransactionRepositoryImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">clearpay-coin-api-server</a> &gt; <a href="index.source.html" class="el_package">com.clearpay.coin.repository</a> &gt; <span class="el_source">TransactionRepositoryImpl.java</span></div><h1>TransactionRepositoryImpl.java</h1><pre class="source lang-java linenums">package com.clearpay.coin.repository;
+
+import com.clearpay.coin.exceptions.LowBalanceException;
+import com.clearpay.coin.exceptions.NotFoundException;
+import com.clearpay.coin.model.TransactionRequest;
+import com.clearpay.coin.model.User;
+import com.clearpay.coin.model.Wallet;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.stereotype.Repository;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+@Repository
+<span class="fc" id="L16">@Slf4j</span>
+public class TransactionRepositoryImpl implements TransactionRepository {
+    public static final int MAX_RETRIES = 3;
+    private final UserRepository userRepository;
+
+<span class="fc" id="L21">    public TransactionRepositoryImpl(UserRepository userRepository) {</span>
+<span class="fc" id="L22">        this.userRepository = userRepository;</span>
+<span class="fc" id="L23">    }</span>
+
+    @Override
+    public List&lt;User&gt; perform(TransactionRequest transactionRequest) {
+<span class="fc bfc" id="L27" title="All 2 branches covered.">        if (transactionRequest.getRecipientWalletId().equals(transactionRequest.getSenderWalletId())) {</span>
+<span class="fc" id="L28">            return List.of();</span>
+        }
+<span class="fc" id="L30">        return perform(transactionRequest, 0);</span>
+    }
+
+    public List&lt;User&gt; perform(TransactionRequest transactionRequest, int retry) {
+<span class="fc" id="L34">        User fromUser = findUserByWalletId(transactionRequest.getSenderWalletId());</span>
+<span class="fc" id="L35">        Wallet senderWallet = findWallet(fromUser, transactionRequest.getSenderWalletId());</span>
+<span class="fc" id="L36">        BigDecimal transferAmount = new BigDecimal(transactionRequest.getAmount());</span>
+<span class="fc" id="L37">        BigDecimal newSenderBalance = new BigDecimal(senderWallet.getBalance()).subtract(transferAmount);</span>
+
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        if (newSenderBalance.floatValue() &lt; 0) {</span>
+<span class="fc" id="L40">            throw new LowBalanceException(&quot;Wallet '&quot; + transactionRequest.getSenderWalletId() + &quot;' has insufficient balance for the transaction.&quot;);</span>
+        }
+
+<span class="fc" id="L43">        boolean isSameUser = fromUser.getWallets().stream().anyMatch(wallet -&gt; wallet.getId().equals(transactionRequest.getRecipientWalletId()));</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        User toUser = isSameUser ? fromUser : findUserByWalletId(transactionRequest.getRecipientWalletId());</span>
+
+<span class="fc" id="L46">        Wallet recipientWallet = findWallet(toUser, transactionRequest.getRecipientWalletId());</span>
+<span class="fc" id="L47">        String newRecipientBalance = new BigDecimal(recipientWallet.getBalance()).add(transferAmount).stripTrailingZeros().toPlainString();</span>
+
+<span class="fc" id="L49">        senderWallet.setBalance(newSenderBalance.stripTrailingZeros().toPlainString());</span>
+<span class="fc" id="L50">        recipientWallet.setBalance(newRecipientBalance);</span>
+
+        try {
+<span class="fc bfc" id="L53" title="All 2 branches covered.">            return userRepository.saveAll(isSameUser ? List.of(fromUser) : List.of(fromUser, toUser));</span>
+<span class="fc" id="L54">        } catch (OptimisticLockingFailureException e) {</span>
+<span class="fc" id="L55">            log.info(&quot;Failed to update, trying again. Retry #{}&quot;, retry + 1);</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">            if (retry &lt; MAX_RETRIES) {</span>
+<span class="nc" id="L57">                List&lt;User&gt; list = perform(transactionRequest, retry + 1);</span>
+<span class="nc" id="L58">                log.info(&quot;Finally performed transaction from {} try.&quot;, retry + 1);</span>
+<span class="nc" id="L59">                return list;</span>
+            } else {
+<span class="fc" id="L61">                throw new IllegalStateException(&quot;Failed to update. Can't retrieve lock&quot;);</span>
+            }
+        }
+    }
+
+    private Wallet findWallet(User user, String walletId) {
+<span class="fc" id="L67">        return user.getWallets().stream()</span>
+<span class="fc" id="L68">                .filter(w -&gt; w.getId().equals(walletId)).findFirst()</span>
+<span class="pc" id="L69">                .orElseThrow(() -&gt; new NotFoundException(&quot;Wallet with id '&quot; + walletId + &quot;' was not found.&quot;));</span>
+    }
+
+    private User findUserByWalletId(String walletId) {
+<span class="fc" id="L73">        return userRepository.findByWallets_Id(walletId).stream().findFirst()</span>
+<span class="fc" id="L74">                .orElseThrow(() -&gt; new NotFoundException(&quot;User with wallet '&quot; + walletId + &quot;' was not found.&quot;));</span>
+    }
+
+    private User findUser(String user) {
+<span class="nc" id="L78">        return userRepository.findById(user)</span>
+<span class="nc" id="L79">                .orElseThrow(() -&gt; new NotFoundException(&quot;User with id '&quot; + user + &quot;' was not found.&quot;));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
