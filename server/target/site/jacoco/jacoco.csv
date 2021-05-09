@@ -1,0 +1,14 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+clearpay-coin-api-server,com.clearpay.coin.validation,StringRepresentsDecimalValidator,0,14,0,0,0,6,0,3,0,3
+clearpay-coin-api-server,com.clearpay.coin.repository,TransactionRepositoryImpl,23,165,2,6,5,25,1,15,0,12
+clearpay-coin-api-server,com.clearpay.coin.model,Wallet,0,18,0,2,0,5,0,3,0,2
+clearpay-coin-api-server,com.clearpay.coin.model,User,0,12,0,0,0,5,0,1,0,1
+clearpay-coin-api-server,com.clearpay.coin.exceptions,NotFoundException,0,4,0,0,0,2,0,1,0,1
+clearpay-coin-api-server,com.clearpay.coin.exceptions,LowBalanceException,0,4,0,0,0,2,0,1,0,1
+clearpay-coin-api-server,com.clearpay.coin.controller,TransactionController,0,91,0,2,0,15,0,6,0,5
+clearpay-coin-api-server,com.clearpay.coin.controller,WalletController,13,31,0,0,1,6,1,4,1,4
+clearpay-coin-api-server,com.clearpay.coin.configuration,TestDataLoader,0,164,0,2,0,19,0,7,0,6
+clearpay-coin-api-server,com.clearpay.coin.configuration,CustomRestMvcConfiguration,0,8,0,0,0,2,0,2,0,2
+clearpay-coin-api-server,com.clearpay.coin.configuration,CustomRestMvcConfiguration.new RepositoryRestConfigurer() {...},0,31,0,0,0,5,0,2,0,2
+clearpay-coin-api-server,com.clearpay.coin.configuration,RepositoryConfiguration,2,17,0,0,0,5,1,5,1,5
+clearpay-coin-api-server,com.clearpay.coin,Application,5,7,0,0,2,2,1,2,1,2

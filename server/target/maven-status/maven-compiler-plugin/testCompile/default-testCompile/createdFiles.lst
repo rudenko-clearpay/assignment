@@ -1,0 +1,4 @@
+com/clearpay/coin/controller/TransactionControllerTest.class
+com/clearpay/coin/controller/WalletControllerTest.class
+com/clearpay/coin/configuration/TestDataLoaderTest.class
+com/clearpay/coin/repository/TransactionRepositoryImplTest.class
