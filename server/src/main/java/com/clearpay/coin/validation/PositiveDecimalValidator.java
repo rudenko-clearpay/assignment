@@ -4,19 +4,23 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.math.BigDecimal;
 
-public class StringRepresentsDecimalValidator implements ConstraintValidator<StringRepresentsDecimal, String> {
+public class PositiveDecimalValidator implements ConstraintValidator<PositiveDecimal, String> {
 
     @Override
-    public void initialize(StringRepresentsDecimal contactNumber) {
+    public void initialize(PositiveDecimal contactNumber) {
     }
 
     @Override
     public boolean isValid(String field, ConstraintValidatorContext constraintValidatorContext) {
         try {
-            new BigDecimal(field);
-            return true;
+            BigDecimal input = new BigDecimal(field);
+            return isGreaterThanZero(input);
         } catch (Exception e) {
             return false;
         }
+    }
+
+    private boolean isGreaterThanZero(BigDecimal input) {
+        return input.compareTo(new BigDecimal(0)) >= 0;
     }
 }

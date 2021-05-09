@@ -5,11 +5,11 @@ import javax.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented
-@Constraint(validatedBy = StringRepresentsDecimalValidator.class)
+@Constraint(validatedBy = PositiveDecimalValidator.class)
 @Target( { ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface StringRepresentsDecimal {
-    String message() default "Invalid phone number";
+public @interface PositiveDecimal {
+    String message() default "Must be a provide a positive decimal number";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

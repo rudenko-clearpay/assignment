@@ -1,6 +1,6 @@
 package com.clearpay.coin.model;
 
-import com.clearpay.coin.validation.StringRepresentsDecimal;
+import com.clearpay.coin.validation.PositiveDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +18,6 @@ public class TransactionRequest {
     String recipientWalletId;
 
     @NotBlank(message = "Transfer amount is required")
-    @StringRepresentsDecimal(message = "Need to provide a valid decimal number")
+    @PositiveDecimal
     String amount;
 }

@@ -71,7 +71,7 @@ class TransactionControllerTest {
     @Test
     @DisplayName("Controller should validate amount type")
     public void wrongFieldType() throws JsonProcessingException {
-        Map<String, List<String>> expected = Map.of("amount", List.of("Need to provide a valid decimal number"));
+        Map<String, List<String>> expected = Map.of("amount", List.of("Must be a provide a positive decimal number"));
         transactionRequest.setAmount("not a number");
         String result = this.restTemplate.postForObject(URL, transactionRequest, String.class);
 
