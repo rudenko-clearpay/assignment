@@ -34,6 +34,8 @@ class TransactionControllerTest {
 
     @MockBean
     private TransactionRepository repository;
+    @MockBean
+    private UserRepository userRepository;
 
     @Autowired
     private TestRestTemplate restTemplate;
