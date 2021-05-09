@@ -4,8 +4,8 @@ import {MemoryRouter} from "react-router-dom";
 import configureMockStore from 'redux-mock-store';
 import {Provider} from "react-redux";
 import React from "react";
-import AdminToggleButton from "../../../modules/header/AdminToggleButton";
-import {setIsAdmin} from "../../../store/actions";
+import LogInButton from "../../../modules/header/LogInButton";
+import {setIsLoggedIn} from "../../../store/actions";
 
 const mockStore = configureMockStore();
 
@@ -14,7 +14,7 @@ let container = null;
 beforeEach(() => {
     container = document.createElement("div");
     document.body.appendChild(container);
-    store = mockStore({users: {}, admin: {}});
+    store = mockStore({users: {}, login: {}});
 
 });
 
@@ -25,22 +25,22 @@ afterEach(() => {
 });
 
 
-it("Admin btn click dispatches event", () => {
+it("Login btn click dispatches event", () => {
     act(() => {
         render(
             <Provider store={store}>
                 <MemoryRouter initialEntries={['/']}>
-                    <AdminToggleButton/>
+                    <LogInButton/>
                 </MemoryRouter>
             </Provider>, container);
     });
-    expect(container.textContent).toContain("Admin mode");
+    expect(container.textContent).toContain("Login mode");
 
     act(() => {
-        const usersPageLink = document.querySelector('#admin_toggle_btn');
+        const usersPageLink = document.querySelector('#login_toggle_btn');
         usersPageLink.dispatchEvent(new MouseEvent("click", {bubbles: true}));
     });
 
     let actions = store.getActions();
-    expect(actions).toStrictEqual([setIsAdmin(true)]);
+    expect(actions).toStrictEqual([setIsLoggedIn(true)]);
 });

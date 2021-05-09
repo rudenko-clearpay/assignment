@@ -1,13 +1,13 @@
 import React from 'react'
 import {ButtonGroup, Form, Nav, Navbar} from 'react-bootstrap';
 import {useHistory} from "react-router-dom";
-import AdminToggleButton from "./AdminToggleButton";
+import LogInButton from "./LogInButton";
 import {useSelector} from "react-redux";
 
 
 const Header = () => {
     const history = useHistory();
-    const isAdmin = useSelector((state) => state.admin.isAdmin);
+    const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
 
     function getNavigationHandler(path) {
         return () => history.push(path);
@@ -21,11 +21,11 @@ const Header = () => {
                 <Nav className="mr-auto">
                     <Nav.Link id="home_nav_link" onClick={getNavigationHandler("/home")}>Home</Nav.Link>
                     <Nav.Link id="users_nav_link" onClick={getNavigationHandler("/users")}>Users</Nav.Link>
-                    {isAdmin && <Nav.Link id="transfer_nav_link" onClick={getNavigationHandler("/transfer")}>Transfer</Nav.Link>}
+                    {isLoggedIn && <Nav.Link id="transfer_nav_link" onClick={getNavigationHandler("/transfer")}>Transfer</Nav.Link>}
                 </Nav>
                 <Form inline>
                     <ButtonGroup toggle className="mb-2">
-                        <AdminToggleButton/>
+                        <LogInButton/>
                     </ButtonGroup>
                 </Form>
             </Navbar.Collapse>

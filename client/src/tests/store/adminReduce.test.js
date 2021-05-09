@@ -1,15 +1,15 @@
-import {setIsAdmin} from "../../store/actions";
-import {adminReducer} from "../../store/reducers/adminReducer";
+import {setIsLoggedIn} from "../../store/actions";
+import {loginReducer} from "../../store/reducers/loginReducer";
 
 
-describe('Admin reducer test', () => {
-    it('setIsAdmin action changes isAdmin value', () => {
-        expect(adminReducer(undefined, {})).toStrictEqual({isAdmin: false});
+describe('Login reducer test', () => {
+    it('setIsLoggedIn action changes isLoggedIn value', () => {
+        expect(loginReducer(undefined, {})).toStrictEqual({isLoggedIn: false});
     })
 
-    it('setIsAdmin action changes isAdmin value', () => {
-        expect(adminReducer(undefined, setIsAdmin(true))).toStrictEqual({isAdmin: true});
-        expect(adminReducer(undefined, setIsAdmin(false))).toStrictEqual({isAdmin: false});
+    it('setIsLoggedIn action changes isLoggedIn value', () => {
+        expect(loginReducer(undefined, setIsLoggedIn(true))).toStrictEqual({isLoggedIn: true});
+        expect(loginReducer(undefined, setIsLoggedIn(false))).toStrictEqual({isLoggedIn: false});
     })
 });
 

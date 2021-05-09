@@ -11,7 +11,7 @@ describe('User reducer test', () => {
         expect(usersReducer(undefined, {})).toStrictEqual(initialState);
     })
 
-    it('loadUsers action changes isAdmin value', () => {
+    it('loadUsers action changes isLoggedIn value', () => {
         const newState = usersReducer(undefined, loadUsers({data: [testUser], page: testPage}));
 
         expect(newState.data).toStrictEqual(usersDataMap);

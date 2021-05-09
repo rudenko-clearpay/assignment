@@ -1,5 +1,5 @@
-import {loadUsers, setIsAdmin, updateUsers} from "../../store/actions";
-import {LOAD_USERS, SET_IS_ADMIN, UPDATE_USERS} from "../../store/actionTypes";
+import {loadUsers, setIsLoggedIn, updateUsers} from "../../store/actions";
+import {LOAD_USERS, SET_IS_LOGGED_IN, UPDATE_USERS} from "../../store/actionTypes";
 
 describe('Actions test', () => {
     const testUser = {id: "someId", fullName: "Mark"};
@@ -14,9 +14,9 @@ describe('Actions test', () => {
         expect(updateUsers(content)).toStrictEqual({type: UPDATE_USERS, payload: content});
     })
 
-    it('test setIsAdmin returned value', () => {
+    it('test setLoggedIn returned value', () => {
         const content = true;
-        expect(setIsAdmin(content)).toStrictEqual({type: SET_IS_ADMIN, payload: content});
+        expect(setIsLoggedIn(content)).toStrictEqual({type: SET_IS_LOGGED_IN, payload: content});
     })
 
 });

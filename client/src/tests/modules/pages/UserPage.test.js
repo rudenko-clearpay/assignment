@@ -6,7 +6,7 @@ import * as redux from "react-redux";
 import {Provider} from "react-redux";
 import React from "react";
 import {userReducerInitialState} from "../../../store/reducers/usersReducer";
-import {adminReducerInitialState} from "../../../store/reducers/adminReducer";
+import {loginReducerInitialState} from "../../../store/reducers/loginReducer";
 import Users from "../../../modules/pages/Users";
 import {loadUsers} from "../../../store/actions";
 
@@ -17,7 +17,7 @@ let container = null;
 beforeEach(() => {
     container = document.createElement("div");
     document.body.appendChild(container);
-    store = mockStore({users: userReducerInitialState, admin: adminReducerInitialState});
+    store = mockStore({users: userReducerInitialState, login: loginReducerInitialState});
 });
 
 afterEach(() => {

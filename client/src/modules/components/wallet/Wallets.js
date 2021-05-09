@@ -13,7 +13,7 @@ const Wallets = (props) => {
     const [activeWalletId, setActiveWalletId] = useState(wallets ? wallets[0].id : undefined);
     const activeWallet = wallets.find(w => w.id === activeWalletId) || {};
 
-    const isAdmin = useSelector(state => state.admin.isAdmin);
+    const isLoggedIn = useSelector(state => state.login.isLoggedIn);
 
     function walletChangeHandler(wallet) {
         setActiveWalletId(wallet.id);
@@ -33,7 +33,7 @@ const Wallets = (props) => {
                 <Card.Title key={"wallet_card_body_title_" + user.id} className="justify-content-between">
                     <span>Current balance is: {activeWallet.balance} </span>
                     <Button variant="outline-info" onClick={copyActiveWalletId}>Copy wallet ID</Button></Card.Title>
-                {isAdmin && <div key={"wallet_card_body_text_" + user.id}>
+                {isLoggedIn && <div key={"wallet_card_body_text_" + user.id}>
                     <TransferSection originWallet={activeWallet}/>
                 </div>}
             </Card.Body>

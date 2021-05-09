@@ -13,7 +13,7 @@ let container = null;
 beforeEach(() => {
     container = document.createElement("div");
     document.body.appendChild(container);
-    store = mockStore({users: {}, admin: {}});
+    store = mockStore({users: {}, login: {}});
 
 });
 
@@ -51,7 +51,7 @@ it("Header links change pages", () => {
     expect(document.body.textContent).toContain('Content');
 });
 
-it("Admin btn click dispatches event", () => {
+it("Login btn click dispatches event", () => {
     act(() => {
         render(
             <Provider store={store}>
