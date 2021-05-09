@@ -4,6 +4,7 @@ import com.clearpay.coin.exceptions.NotFoundException;
 import com.clearpay.coin.model.User;
 import com.clearpay.coin.model.Wallet;
 import com.clearpay.coin.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,29 +17,32 @@ import java.util.Optional;
 
 import static com.clearpay.coin.controller.ErrorResponse.GENERAL_ERRORS;
 
+@CrossOrigin(origins = &quot;http://localhost:3000&quot;)
 @RestController
 @RequestMapping(value = &quot;/wallets&quot;, produces = MediaType.APPLICATION_JSON_VALUE)
+<span class="fc" id="L23">@Slf4j</span>
 public class WalletController {
 
     final UserRepository repository;
 
     @Autowired
-<span class="fc" id="L26">    public WalletController(UserRepository repository) {</span>
-<span class="fc" id="L27">        this.repository = repository;</span>
-<span class="fc" id="L28">    }</span>
+<span class="fc" id="L29">    public WalletController(UserRepository repository) {</span>
+<span class="fc" id="L30">        this.repository = repository;</span>
+<span class="fc" id="L31">    }</span>
 
 
     @GetMapping(path = &quot;/{userId}&quot;)
     public ResponseEntity&lt;List&lt;Wallet&gt;&gt; getUserWallets(@PathVariable String userId) {
-<span class="fc" id="L33">        Optional&lt;User&gt; user = repository.findById(userId);</span>
+<span class="fc" id="L36">        log.info(&quot;Retrieving user wallets '{}'&quot;, userId);</span>
+<span class="fc" id="L37">        Optional&lt;User&gt; user = repository.findById(userId);</span>
 
-<span class="fc" id="L35">        return user.map(value -&gt; new ResponseEntity&lt;&gt;(value.getWallets(), HttpStatus.OK))</span>
-<span class="fc" id="L36">                .orElseGet(() -&gt; new ResponseEntity&lt;&gt;(null, HttpStatus.NOT_FOUND));</span>
+<span class="fc" id="L39">        return user.map(value -&gt; new ResponseEntity&lt;&gt;(value.getWallets(), HttpStatus.OK))</span>
+<span class="fc" id="L40">                .orElseGet(() -&gt; new ResponseEntity&lt;&gt;(null, HttpStatus.NOT_FOUND));</span>
     }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity&lt;ErrorResponse&gt; notFoundHandler(NotFoundException ex) {
-<span class="nc" id="L41">        return new ResponseEntity&lt;&gt;(new ErrorResponse(Map.of(GENERAL_ERRORS, List.of(ex.getMessage()))), HttpStatus.NOT_FOUND);</span>
+<span class="nc" id="L45">        return new ResponseEntity&lt;&gt;(new ErrorResponse(Map.of(GENERAL_ERRORS, List.of(ex.getMessage()))), HttpStatus.NOT_FOUND);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
