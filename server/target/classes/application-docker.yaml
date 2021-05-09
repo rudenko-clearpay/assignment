@@ -1,0 +1,7 @@
+spring:
+  data:
+    mongodb:
+      host: 'mongo'
+
+server:
+  port: 8080
