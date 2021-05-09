@@ -75,6 +75,9 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <outputDirectory>${project.basedir}/coverage_report</outputDirectory>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>jacoco-check</id>
