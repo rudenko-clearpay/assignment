@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build-back:
+  tests-server:
     defaults:
       run:
         shell: bash
@@ -18,11 +18,39 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.7
+          java-version: 16
       - name: Cache Maven packages
         uses: actions/cache@v2
         with:
-          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build with Maven
+        run: mvn test --file pom.xml
+      - name: Archive target folder
+        uses: actions/upload-artifact@v2
+        with:
+          name: targetdir
+          path: server/targer/
+
+  build-back:
+    needs: [ tests-server ]
+    defaults:
+      run:
+        shell: bash
+        working-directory: server
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 16
+      - uses: actions/download-artifact@v2
+        with:
+          name: targetdir
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Build with Maven
@@ -33,70 +61,33 @@ jobs:
           name: record-manager
           path: server/target/*.jar
 
-  build-ui:
-    defaults:
-      run:
-        shell: bash
-        working-directory: client
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: '14'
-      - name: Cache Node.js modules
-        uses: actions/cache@v2
-        with:
-          # npm cache files are stored in `~/.npm` on Linux/macOS
-          path: ~/.npm
-          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-node-
-            ${{ runner.OS }}-
-      - name: Install deps
-        run: npm ci
-      - name: Build UI
-        run: npm run build
-      - name: Archive UI artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: ui-build
-          path: client/build/
-
-  deploy-ui:
-    needs: [build-ui]
-    defaults:
-      run:
-        shell: bash
-        working-directory: client
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Download ui build artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: ui-build
-          path: client/build/
-      - name: Setup Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: '14'
-      - name: Cache Node.js modules
-        uses: actions/cache@v2
-        with:
-          # npm cache files are stored in `~/.npm` on Linux/macOS
-          path: ~/.npm
-          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-node-
-            ${{ runner.OS }}-
-      - name: Install deps
-        run: npm ci
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@3.7.1
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: gh-pages
-          FOLDER: client/build
-          CLEAN: true
+#  build-ui:
+#    defaults:
+#      run:
+#        shell: bash
+#        working-directory: client
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Setup Node
+#        uses: actions/setup-node@v1
+#        with:
+#          node-version: '14'
+#      - name: Cache Node.js modules
+#        uses: actions/cache@v2
+#        with:
+#          # npm cache files are stored in `~/.npm` on Linux/macOS
+#          path: ~/.npm
+#          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+#          restore-keys: |
+#            ${{ runner.OS }}-node-
+#            ${{ runner.OS }}-
+#      - name: Install deps
+#        run: npm ci
+#      - name: Build UI
+#        run: npm run build
+#      - name: Archive UI artifacts
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: ui-build
+#          path: client/build/
