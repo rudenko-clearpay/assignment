@@ -73,9 +73,4 @@ public class TransactionRepositoryImpl implements TransactionRepository {
         return userRepository.findByWallets_Id(walletId).stream().findFirst()
                 .orElseThrow(() -> new NotFoundException("User with wallet '" + walletId + "' was not found."));
     }
-
-    private User findUser(String user) {
-        return userRepository.findById(user)
-                .orElseThrow(() -> new NotFoundException("User with id '" + user + "' was not found."));
-    }
 }

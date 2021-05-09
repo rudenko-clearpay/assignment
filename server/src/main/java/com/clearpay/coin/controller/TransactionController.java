@@ -5,6 +5,7 @@ import com.clearpay.coin.exceptions.NotFoundException;
 import com.clearpay.coin.model.TransactionRequest;
 import com.clearpay.coin.model.User;
 import com.clearpay.coin.repository.TransactionRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,9 +23,10 @@ import java.util.Map;
 
 import static com.clearpay.coin.controller.ErrorResponse.GENERAL_ERRORS;
 
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping(value = "/transaction", produces = MediaType.APPLICATION_JSON_VALUE)
+@Slf4j
 public class TransactionController {
 
     final TransactionRepository repository;
@@ -37,23 +39,27 @@ public class TransactionController {
 
     @PostMapping
     public ResponseEntity<List<User>> doTransaction(@RequestBody @Valid TransactionRequest request) {
+        log.debug("Performing transfer between '{}' and '{}'", request.getSenderWalletId(), request.getRecipientWalletId());
         List<User> updatedUsers = repository.perform(request);
         return new ResponseEntity<>(updatedUsers, HttpStatus.OK);
     }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> notFoundHandler(NotFoundException ex) {
+        log.debug("Returning not found response '{}'", ex.getMessage());
         return new ResponseEntity<>(new ErrorResponse(Map.of(GENERAL_ERRORS, List.of(ex.getMessage()))), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(LowBalanceException.class)
     public ResponseEntity<ErrorResponse> lowBalanceHandler(LowBalanceException ex) {
+        log.debug("Returning low balance response '{}'", ex.getMessage());
         return new ResponseEntity<>(new ErrorResponse(Map.of(GENERAL_ERRORS, List.of(ex.getMessage()))), HttpStatus.BAD_REQUEST);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        log.debug("Request did not passed validation '{}'", ex.getMessage());
         Map<String, List<String>> errors = new HashMap<>();
         for (ObjectError error : ex.getBindingResult().getAllErrors()) {
             String fieldName = ((FieldError) error).getField();
