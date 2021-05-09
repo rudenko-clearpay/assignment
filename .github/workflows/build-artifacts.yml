@@ -60,7 +60,7 @@ jobs:
       - name: Archive JAR artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: record-manager
+          name: server-jar
           path: server/target/*.jar
 
 #  build-ui:
