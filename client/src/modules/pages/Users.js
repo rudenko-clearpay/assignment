@@ -21,7 +21,7 @@ const Users = () => {
     }
 
     useEffect(() => {
-        reduxData.users.size || loadUsersFromApi();
+        reduxData.page || loadUsersFromApi();
     }, []);
 
     return (

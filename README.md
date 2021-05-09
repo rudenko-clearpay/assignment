@@ -16,3 +16,19 @@ docker-compose up
    yarn run start
 
 ```
+
+## About
+A web server application powered by Spring Boot on backend and ReactJS on frontend.  
+The logic is that unless logged in, operator doesn't have access to transfers.  
+There are two public pages: `Home` and `UsersList`, and a private `Transfer` page that is only available after "login".  
+Operator can also do transfers from `Wallets`, he doesn't need to input source wallet ID in that case:
+
+### UsersList page:  
+![UsersList](./gifs/user_list.gif)
+
+### Transfer page:  
+![Transfer](./gifs/transfer_page.gif)
+
+### Validation
+There is a backend validation. In simpler cases it can match errors with fields that produce them: 
+![Validation](./gifs/validation.gif)
