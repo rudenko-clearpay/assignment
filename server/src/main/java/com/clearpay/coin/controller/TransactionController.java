@@ -22,7 +22,7 @@ import java.util.Map;
 
 import static com.clearpay.coin.controller.ErrorResponse.GENERAL_ERRORS;
 
-@CrossOrigin(origins = "http://localhost:3000")
+
 @RestController
 @RequestMapping(value = "/transaction", produces = MediaType.APPLICATION_JSON_VALUE)
 public class TransactionController {

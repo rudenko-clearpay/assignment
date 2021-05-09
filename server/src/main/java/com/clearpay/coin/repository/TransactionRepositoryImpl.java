@@ -40,8 +40,8 @@ public class TransactionRepositoryImpl implements TransactionRepository {
             throw new LowBalanceException("Wallet '" + transactionRequest.getSenderWalletId() + "' has insufficient balance for the transaction.");
         }
 
-        boolean isSameUser = fromUser.getWallets().stream().anyMatch(wallet -> wallet.getId().equals(transactionRequest.getRecipientWalletId()));
-        User toUser = isSameUser ? fromUser : findUserByWalletId(transactionRequest.getRecipientWalletId());
+        boolean isWalletsOwnerSameUser = fromUser.getWallets().stream().anyMatch(wallet -> wallet.getId().equals(transactionRequest.getRecipientWalletId()));
+        User toUser = isWalletsOwnerSameUser ? fromUser : findUserByWalletId(transactionRequest.getRecipientWalletId());
 
         Wallet recipientWallet = findWallet(toUser, transactionRequest.getRecipientWalletId());
         String newRecipientBalance = new BigDecimal(recipientWallet.getBalance()).add(transferAmount).stripTrailingZeros().toPlainString();
@@ -50,7 +50,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
         recipientWallet.setBalance(newRecipientBalance);
 
         try {
-            return userRepository.saveAll(isSameUser ? List.of(fromUser) : List.of(fromUser, toUser));
+            return userRepository.saveAll(isWalletsOwnerSameUser ? List.of(fromUser) : List.of(fromUser, toUser));
         } catch (OptimisticLockingFailureException e) {
             log.info("Failed to update, trying again. Retry #{}", retry + 1);
             if (retry < MAX_RETRIES) {

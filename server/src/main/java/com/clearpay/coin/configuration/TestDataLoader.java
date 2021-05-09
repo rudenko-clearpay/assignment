@@ -13,6 +13,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * Mocked contacts for testing purposes
+ */
 @Component
 @Profile("e2e-testing")
 @Slf4j

@@ -4,6 +4,9 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;
 
+/**
+ * Fields marked with @PositiveDecimal will be checked for having a valid positive decimal number
+ */
 @Documented
 @Constraint(validatedBy = PositiveDecimalValidator.class)
 @Target( { ElementType.METHOD, ElementType.FIELD })

@@ -27,6 +27,9 @@ public class RepositoryConfiguration extends AbstractMongoClientConfiguration im
         return MongoClients.create("mongodb://" + host + ":" + port);
     }
 
+    /**
+     * Need this for Optimistic Locking
+     */
     @Bean
     public WriteConcernResolver writeConcernResolver() {
         return action -> WriteConcern.ACKNOWLEDGED;
@@ -37,6 +40,9 @@ public class RepositoryConfiguration extends AbstractMongoClientConfiguration im
         return database;
     }
 
+    /**
+     * If removed, indexes won't be created automatically
+     */
     @Override
     protected boolean autoIndexCreation() {
         return true;
