@@ -31,7 +31,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: targetdir
-          path: server/targer/
+          path: server/target
 
   build-back:
     needs: [ tests-server ]
