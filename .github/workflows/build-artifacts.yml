@@ -27,6 +27,10 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       - name: Run unit tests
         run: mvn test --file pom.xml
+      - name: Generate JaCoCo Badge
+        uses: cicirello/jacoco-badge-generator@v2
+        with:
+          generate-branches-badge: true
       - name: Archive target folder
         uses: actions/upload-artifact@v2
         with:
