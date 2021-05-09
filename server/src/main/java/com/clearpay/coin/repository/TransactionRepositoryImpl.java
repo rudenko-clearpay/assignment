@@ -24,11 +24,14 @@ public class TransactionRepositoryImpl implements TransactionRepository {
 
     @Override
     public List<User> perform(TransactionRequest transactionRequest) {
+        if (transactionRequest.getRecipientWalletId().equals(transactionRequest.getSenderWalletId())) {
+            return List.of();
+        }
         return perform(transactionRequest, 0);
     }
 
     public List<User> perform(TransactionRequest transactionRequest, int retry) {
-        User fromUser = findUser(transactionRequest.getSenderId());
+        User fromUser = findUserByWalletId(transactionRequest.getSenderWalletId());
         Wallet senderWallet = findWallet(fromUser, transactionRequest.getSenderWalletId());
         BigDecimal transferAmount = new BigDecimal(transactionRequest.getAmount());
         BigDecimal newSenderBalance = new BigDecimal(senderWallet.getBalance()).subtract(transferAmount);
@@ -51,7 +54,9 @@ public class TransactionRepositoryImpl implements TransactionRepository {
         } catch (OptimisticLockingFailureException e) {
             log.info("Failed to update, trying again. Retry #{}", retry + 1);
             if (retry < MAX_RETRIES) {
-                return perform(transactionRequest, retry + 1);
+                List<User> list = perform(transactionRequest, retry + 1);
+                log.info("Finally performed transaction from {} try.", retry + 1);
+                return list;
             } else {
                 throw new IllegalStateException("Failed to update. Can't retrieve lock");
             }

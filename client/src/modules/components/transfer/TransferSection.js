@@ -22,7 +22,6 @@ const TransferSection = (props) => {
 
     const onSubmit = async () => {
         const transaction = {
-            senderId: user.id,
             senderWalletId: originWallet.id,
             recipientWalletId: recipientWalletId,
             amount: amount

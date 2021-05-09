@@ -12,10 +12,12 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.dao.OptimisticLockingFailureException;
 
 import java.util.List;
 import java.util.Optional;
 
+import static com.clearpay.coin.repository.TransactionRepositoryImpl.MAX_RETRIES;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -46,15 +48,16 @@ class TransactionRepositoryImplTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+
+        when(userRepository.findByWallets_Id(WALLET_U1_1)).thenReturn(List.of(user1));
+        when(userRepository.findByWallets_Id(WALLET_U1_2)).thenReturn(List.of(user1));
+        when(userRepository.findByWallets_Id(WALLET_U2_2)).thenReturn(List.of(user2));
     }
 
     @Test
     @DisplayName("Transaction passes fine")
     void testTransactionOK() {
-        when(userRepository.findById(USER_ID_1)).thenReturn(Optional.of(user1));
-        when(userRepository.findByWallets_Id(WALLET_U2_2)).thenReturn(List.of(user2));
-
-        transactionRepository.perform(new TransactionRequest(USER_ID_1, WALLET_U1_2, WALLET_U2_2, "100"));
+        transactionRepository.perform(new TransactionRequest(WALLET_U1_2, WALLET_U2_2, "100"));
         assertThat(user1.getWallets().get(1).getBalance()).isEqualTo("1900");
         assertThat(user2.getWallets().get(1).getBalance()).isEqualTo("100");
         verify(userRepository).saveAll(List.of(user1, user2));
@@ -63,25 +66,38 @@ class TransactionRepositoryImplTest {
     @Test
     @DisplayName("Transaction between wallets of the same user passes fine")
     void testTransactionWithinSameUser() {
-        when(userRepository.findById(USER_ID_1)).thenReturn(Optional.of(user1));
+        when(userRepository.findByWallets_Id(WALLET_U1_2)).thenReturn(List.of(user1));
 
-        transactionRepository.perform(new TransactionRequest(USER_ID_1, WALLET_U1_2, WALLET_U1_1, "100"));
+        transactionRepository.perform(new TransactionRequest(WALLET_U1_2, WALLET_U1_1, "100"));
 
         assertThat(user1.getWallets().get(0).getBalance()).isEqualTo("199");
         assertThat(user1.getWallets().get(1).getBalance()).isEqualTo("1900");
         verify(userRepository).saveAll(List.of(user1));
-        verify(userRepository, times(1)).findById(USER_ID_1);
+        verify(userRepository, times(1)).findByWallets_Id(any());
+    }
+    @Test
+    @DisplayName("Transaction between same wallets does nothing")
+    void testTransactionWithinSameWaletDoesNothing() {
+        when(userRepository.findByWallets_Id(WALLET_U1_1)).thenReturn(List.of(user1));
+
+        transactionRepository.perform(new TransactionRequest(WALLET_U1_1, WALLET_U1_1, "100"));
+
+        assertThat(user1.getWallets().get(0).getBalance()).isEqualTo("99");
+        assertThat(user1.getWallets().get(1).getBalance()).isEqualTo("2000");
+
+        verify(userRepository, never()).saveAll(List.of(user1));
+        verify(userRepository, never()).findByWallets_Id(any());
     }
 
     @Test
     @DisplayName("Transaction fails due to low balance")
     void testTransactionLowBalance() {
-        when(userRepository.findById(USER_ID_1)).thenReturn(Optional.of(user1));
-        when(userRepository.findById(USER_ID_2)).thenReturn(Optional.of(user2));
+        when(userRepository.findById(WALLET_U1_1)).thenReturn(Optional.of(user1));
+        when(userRepository.findById(WALLET_U2_2)).thenReturn(Optional.of(user2));
 
 
-        Executable operation = () -> transactionRepository.perform(new TransactionRequest(USER_ID_1, WALLET_U1_1, WALLET_U2_2, "100"));
-        LowBalanceException exception = assertThrows(LowBalanceException.class,  operation);
+        Executable operation = () -> transactionRepository.perform(new TransactionRequest(WALLET_U1_1, WALLET_U2_2, "100"));
+        LowBalanceException exception = assertThrows(LowBalanceException.class, operation);
 
         assertThat(exception.getMessage()).isEqualTo("Wallet '" + WALLET_U1_1 + "' has insufficient balance for the transaction.");
     }
@@ -89,48 +105,34 @@ class TransactionRepositoryImplTest {
     @Test
     @DisplayName("Throws exception when origin user not found")
     void testTransactionOriginUserNotFound() {
-        when(userRepository.findById(USER_ID_1)).thenReturn(Optional.empty());
-        when(userRepository.findById(USER_ID_2)).thenReturn(Optional.of(user2));
+        when(userRepository.findByWallets_Id(WALLET_U1_2)).thenReturn(List.of());
 
-        Executable operation = () -> transactionRepository.perform(new TransactionRequest(USER_ID_1, WALLET_U1_2, WALLET_U2_2, "100"));
-        NotFoundException exception = assertThrows(NotFoundException.class,  operation);
+        Executable operation = () -> transactionRepository.perform(new TransactionRequest(WALLET_U1_2, WALLET_U2_2, "100"));
+        NotFoundException exception = assertThrows(NotFoundException.class, operation);
 
-        assertThat(exception.getMessage()).isEqualTo("User with id '" + USER_ID_1 + "' was not found.");
-    }
-
-    @Test
-    @DisplayName("Throws exception when origin wallet not found")
-    void testTransactionOriginWalletNotFound() {
-        user1.setWallets(List.of(wallet11));
-        when(userRepository.findById(USER_ID_1)).thenReturn(Optional.of(user1));
-
-        Executable operation = () -> transactionRepository.perform(new TransactionRequest(USER_ID_1, WALLET_U1_2, WALLET_U2_2, "100"));
-        NotFoundException exception = assertThrows(NotFoundException.class,  operation);
-
-        assertThat(exception.getMessage()).isEqualTo("Wallet with id '" + WALLET_U1_2 + "' was not found.");
+        assertThat(exception.getMessage()).isEqualTo("User with wallet '" + WALLET_U1_2 + "' was not found.");
     }
 
     @Test
     @DisplayName("Throws exception when destination wallet not found")
     void testTransactionDestinationWalletNotFound() {
-        when(userRepository.findById(USER_ID_1)).thenReturn(Optional.of(user1));
-        user2.setWallets(List.of(wallet21));
-        when(userRepository.findById(USER_ID_2)).thenReturn(Optional.of(user2));
-        Executable operation = () -> transactionRepository.perform(new TransactionRequest(USER_ID_1, WALLET_U1_2, WALLET_U2_2, "100"));
-        NotFoundException exception = assertThrows(NotFoundException.class,  operation);
+        when(userRepository.findByWallets_Id(WALLET_U2_2)).thenReturn(List.of());
+
+        Executable operation = () -> transactionRepository.perform(new TransactionRequest(WALLET_U1_2, WALLET_U2_2, "100"));
+        NotFoundException exception = assertThrows(NotFoundException.class, operation);
 
         assertThat(exception.getMessage()).isEqualTo("User with wallet '" + WALLET_U2_2 + "' was not found.");
     }
 
     @Test
-    @DisplayName("Throws exception when destination user not found")
+    @DisplayName("Retries few times if failed with optimistic lock")
     void testTransactionDestinationUserNotFound() {
-        when(userRepository.findById(USER_ID_1)).thenReturn(Optional.of(user1));
-        when(userRepository.findById(USER_ID_2)).thenReturn(Optional.empty());
+        when(userRepository.findByWallets_Id(USER_ID_1)).thenReturn(List.of(user1));
+        when(userRepository.findByWallets_Id(USER_ID_2)).thenReturn(List.of(user2));
+        when(userRepository.saveAll(any())).thenThrow(OptimisticLockingFailureException.class);
 
-        Executable operation = () -> transactionRepository.perform(new TransactionRequest(USER_ID_1, WALLET_U1_2, WALLET_U2_2, "100"));
-        NotFoundException exception = assertThrows(NotFoundException.class,  operation);
-
-        assertThat(exception.getMessage()).isEqualTo("User with wallet '" + WALLET_U2_2 + "' was not found.");
+        Executable operation = () -> transactionRepository.perform(new TransactionRequest(WALLET_U1_2, WALLET_U2_2, "100"));
+        assertThrows(IllegalStateException.class, operation);
+        verify(userRepository, times(MAX_RETRIES + 1)).saveAll(any());
     }
 }

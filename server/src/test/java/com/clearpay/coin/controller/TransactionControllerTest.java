@@ -34,13 +34,11 @@ class TransactionControllerTest {
 
     @MockBean
     private TransactionRepository repository;
-    @MockBean
-    private UserRepository userRepository;
 
     @Autowired
     private TestRestTemplate restTemplate;
     private String URL;
-    private final TransactionRequest transactionRequest = new TransactionRequest("A", "B", "C", "1000");
+    private final TransactionRequest transactionRequest = new TransactionRequest( "B", "C", "1000");
 
     @BeforeEach
     void setUp() {

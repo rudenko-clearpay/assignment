@@ -11,9 +11,6 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransactionRequest {
-    @NotBlank(message = "Origin user is required")
-    String senderId;
-
     @NotBlank(message = "Origin wallet id is required")
     String senderWalletId;
 
