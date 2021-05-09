@@ -1,4 +1,4 @@
-import {LOAD_USERS, UPDATE_USERS} from "./actionTypes"
+import {LOAD_USERS, UPDATE_USERS} from "../actionTypes"
 
 export const userReducerInitialState = {data: new Map(), page: null}
 

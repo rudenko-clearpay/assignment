@@ -1,5 +1,5 @@
 import {setIsAdmin} from "../../store/actions";
-import {adminReducer} from "../../store/adminReducer";
+import {adminReducer} from "../../store/reducers/adminReducer";
 
 
 describe('Admin reducer test', () => {

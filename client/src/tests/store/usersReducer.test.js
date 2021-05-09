@@ -1,5 +1,5 @@
 import {loadUsers, updateUsers} from "../../store/actions";
-import {usersReducer} from "../../store/usersReducer";
+import {usersReducer} from "../../store/reducers/usersReducer";
 
 describe('User reducer test', () => {
     const initialState = {data: new Map(), page: null};

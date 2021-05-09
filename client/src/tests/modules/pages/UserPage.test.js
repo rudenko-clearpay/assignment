@@ -5,8 +5,8 @@ import configureMockStore from 'redux-mock-store';
 import * as redux from "react-redux";
 import {Provider} from "react-redux";
 import React from "react";
-import {userReducerInitialState} from "../../../store/usersReducer";
-import {adminReducerInitialState} from "../../../store/adminReducer";
+import {userReducerInitialState} from "../../../store/reducers/usersReducer";
+import {adminReducerInitialState} from "../../../store/reducers/adminReducer";
 import Users from "../../../modules/pages/Users";
 import {loadUsers} from "../../../store/actions";
 

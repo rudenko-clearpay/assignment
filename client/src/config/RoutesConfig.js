@@ -1,6 +1,8 @@
 import {Route, Switch} from "react-router-dom";
 import UsersPage from "../modules/pages/Users";
 import HomePage from "../modules/pages/Home";
+import TransferPage from "../modules/pages/TransferPage";
+import PrivateRoute from "./PrivateRoute";
 
 const Routes = () => {
     return (
@@ -14,6 +16,8 @@ const Routes = () => {
             <Route path="/users">
                 <UsersPage />
             </Route>
+            <PrivateRoute path="/transfer" component={TransferPage}>
+            </PrivateRoute>
             <Route path="*">
                 <div>No match found</div>
             </Route>

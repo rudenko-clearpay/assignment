@@ -1,6 +1,6 @@
 import {Card, Col, Form} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {transfer} from "../../../api/transfers";
 import {useDispatch} from "react-redux";
 import {updateUsers} from "../../../store/actions";
@@ -9,20 +9,26 @@ import FormErrors from "./FormErrors";
 
 
 const TransferSection = (props) => {
-    const {user, originWallet} = props;
+    const {originWallet = {}} = props;
     const [recipientWalletId, setRecipientWalletId] = useState();
+    const [senderWalletId, setSenderWalletId] = useState(originWallet.id);
     const [amount, setAmount] = useState();
     const [errors, setErrors] = useState({});
     const dispatch = useDispatch();
 
+    useEffect(() => {
+        setSenderWalletId(originWallet.id)
+    }, [originWallet.id]);
+
     const fieldsMapping = {
         amount: setAmount,
-        recipientWalletId: setRecipientWalletId
+        recipientWalletId: setRecipientWalletId,
+        senderWalletId: setSenderWalletId
     };
 
     const onSubmit = async () => {
         const transaction = {
-            senderWalletId: originWallet.id,
+            senderWalletId: senderWalletId,
             recipientWalletId: recipientWalletId,
             amount: amount
         }
@@ -31,7 +37,6 @@ const TransferSection = (props) => {
         if (response.status === 200) {
             dispatch(updateUsers(response))
         } else {
-
             setErrors(response.data.errors);
         }
     }
@@ -47,8 +52,11 @@ const TransferSection = (props) => {
             <Card.Body>
                 <Form noValidate>
                     <Form.Row>
+                        {!!originWallet.id || <Col>
+                            <Form.Label>Sender Wallet ID</Form.Label>
+                        </Col>}
                         <Col>
-                            <Form.Label>Wallet ID</Form.Label>
+                            <Form.Label>Destination Wallet ID</Form.Label>
                         </Col>
                         <Col>
                             <Form.Label>Amount</Form.Label>
@@ -58,6 +66,9 @@ const TransferSection = (props) => {
                         </Col>
                     </Form.Row>
                     <Form.Row>
+                        {!!originWallet.id ||
+                        <FieldControl placeholder="Wallet ID" onChange={onFieldChange} fieldName="senderWalletId"
+                                      errors={errors}/>}
                         <FieldControl placeholder="Wallet ID" onChange={onFieldChange} fieldName="recipientWalletId"
                                       errors={errors}/>
                         <FieldControl placeholder="0.0" onChange={onFieldChange} fieldName="amount" errors={errors}/>

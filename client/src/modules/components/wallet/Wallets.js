@@ -34,7 +34,7 @@ const Wallets = (props) => {
                     <span>Current balance is: {activeWallet.balance} </span>
                     <Button variant="outline-info" onClick={copyActiveWalletId}>Copy wallet ID</Button></Card.Title>
                 {isAdmin && <div key={"wallet_card_body_text_" + user.id}>
-                    <TransferSection user={user} originWallet={activeWallet}/>
+                    <TransferSection originWallet={activeWallet}/>
                 </div>}
             </Card.Body>
         </Card>);

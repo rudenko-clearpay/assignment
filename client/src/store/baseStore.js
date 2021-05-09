@@ -1,6 +1,6 @@
 import {combineReducers, createStore} from "redux";
-import {usersReducer} from "./usersReducer";
-import {adminReducer} from "./adminReducer";
+import {usersReducer} from "./reducers/usersReducer";
+import {adminReducer} from "./reducers/adminReducer";
 
 const store = createStore(
     combineReducers({

@@ -1,4 +1,4 @@
-import {SET_IS_ADMIN} from "./actionTypes"
+import {SET_IS_ADMIN} from "../actionTypes"
 
 export const adminReducerInitialState = {isAdmin: false}
 
