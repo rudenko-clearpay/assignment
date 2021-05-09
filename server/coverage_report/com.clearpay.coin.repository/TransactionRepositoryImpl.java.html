@@ -40,8 +40,8 @@ public class TransactionRepositoryImpl implements TransactionRepository {
 <span class="fc" id="L40">            throw new LowBalanceException(&quot;Wallet '&quot; + transactionRequest.getSenderWalletId() + &quot;' has insufficient balance for the transaction.&quot;);</span>
         }
 
-<span class="fc" id="L43">        boolean isSameUser = fromUser.getWallets().stream().anyMatch(wallet -&gt; wallet.getId().equals(transactionRequest.getRecipientWalletId()));</span>
-<span class="fc bfc" id="L44" title="All 2 branches covered.">        User toUser = isSameUser ? fromUser : findUserByWalletId(transactionRequest.getRecipientWalletId());</span>
+<span class="fc" id="L43">        boolean isWalletsOwnerSameUser = fromUser.getWallets().stream().anyMatch(wallet -&gt; wallet.getId().equals(transactionRequest.getRecipientWalletId()));</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        User toUser = isWalletsOwnerSameUser ? fromUser : findUserByWalletId(transactionRequest.getRecipientWalletId());</span>
 
 <span class="fc" id="L46">        Wallet recipientWallet = findWallet(toUser, transactionRequest.getRecipientWalletId());</span>
 <span class="fc" id="L47">        String newRecipientBalance = new BigDecimal(recipientWallet.getBalance()).add(transferAmount).stripTrailingZeros().toPlainString();</span>
@@ -50,7 +50,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
 <span class="fc" id="L50">        recipientWallet.setBalance(newRecipientBalance);</span>
 
         try {
-<span class="fc bfc" id="L53" title="All 2 branches covered.">            return userRepository.saveAll(isSameUser ? List.of(fromUser) : List.of(fromUser, toUser));</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">            return userRepository.saveAll(isWalletsOwnerSameUser ? List.of(fromUser) : List.of(fromUser, toUser));</span>
 <span class="fc" id="L54">        } catch (OptimisticLockingFailureException e) {</span>
 <span class="fc" id="L55">            log.info(&quot;Failed to update, trying again. Retry #{}&quot;, retry + 1);</span>
 <span class="fc bfc" id="L56" title="All 2 branches covered.">            if (retry &lt; MAX_RETRIES) {</span>
@@ -72,11 +72,6 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     private User findUserByWalletId(String walletId) {
 <span class="fc" id="L73">        return userRepository.findByWallets_Id(walletId).stream().findFirst()</span>
 <span class="fc" id="L74">                .orElseThrow(() -&gt; new NotFoundException(&quot;User with wallet '&quot; + walletId + &quot;' was not found.&quot;));</span>
-    }
-
-    private User findUser(String user) {
-<span class="nc" id="L78">        return userRepository.findById(user)</span>
-<span class="nc" id="L79">                .orElseThrow(() -&gt; new NotFoundException(&quot;User with id '&quot; + user + &quot;' was not found.&quot;));</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

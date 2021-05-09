@@ -27,19 +27,25 @@ import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 <span class="fc" id="L27">        return MongoClients.create(&quot;mongodb://&quot; + host + &quot;:&quot; + port);</span>
     }
 
+    /**
+     * Need this for Optimistic Locking
+     */
     @Bean
     public WriteConcernResolver writeConcernResolver() {
-<span class="pc" id="L32">        return action -&gt; WriteConcern.ACKNOWLEDGED;</span>
+<span class="pc" id="L35">        return action -&gt; WriteConcern.ACKNOWLEDGED;</span>
     }
 
     @Override
     protected String getDatabaseName() {
-<span class="fc" id="L37">        return database;</span>
+<span class="fc" id="L40">        return database;</span>
     }
 
+    /**
+     * If removed, indexes won't be created automatically
+     */
     @Override
     protected boolean autoIndexCreation() {
-<span class="fc" id="L42">        return true;</span>
+<span class="fc" id="L48">        return true;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
