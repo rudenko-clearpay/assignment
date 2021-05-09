@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RepositoryConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">clearpay-coin-api-server</a> &gt; <a href="index.source.html" class="el_package">com.clearpay.coin.configuration</a> &gt; <span class="el_source">RepositoryConfiguration.java</span></div><h1>RepositoryConfiguration.java</h1><pre class="source lang-java linenums">package com.clearpay.coin.configuration;
+
+import com.mongodb.WriteConcern;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
+import org.springframework.data.mongodb.core.WriteConcernResolver;
+import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
+
+@Configuration
+<span class="fc" id="L14">public class RepositoryConfiguration extends AbstractMongoClientConfiguration implements RepositoryRestConfigurer {</span>
+
+    @Value(&quot;${spring.data.mongodb.host}&quot;)
+    private String host;
+
+    @Value(&quot;${spring.data.mongodb.port}&quot;)
+    private String port;
+
+    @Value(&quot;${spring.data.mongodb.database}&quot;)
+    private String database;
+
+    @Override
+    public MongoClient mongoClient() {
+<span class="fc" id="L27">        return MongoClients.create(&quot;mongodb://&quot; + host + &quot;:&quot; + port);</span>
+    }
+
+    @Bean
+    public WriteConcernResolver writeConcernResolver() {
+<span class="pc" id="L32">        return action -&gt; WriteConcern.ACKNOWLEDGED;</span>
+    }
+
+    @Override
+    protected String getDatabaseName() {
+<span class="fc" id="L37">        return database;</span>
+    }
+
+    @Override
+    protected boolean autoIndexCreation() {
+<span class="fc" id="L42">        return true;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
