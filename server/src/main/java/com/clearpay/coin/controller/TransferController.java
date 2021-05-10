@@ -1,10 +1,10 @@
 package com.clearpay.coin.controller;
 
-import com.clearpay.coin.exceptions.LowBalanceException;
 import com.clearpay.coin.exceptions.NotFoundException;
-import com.clearpay.coin.model.TransactionRequest;
+import com.clearpay.coin.exceptions.TransferException;
+import com.clearpay.coin.model.TransferRequest;
 import com.clearpay.coin.model.User;
-import com.clearpay.coin.repository.TransactionRepository;
+import com.clearpay.coin.services.TransferService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,39 +21,37 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static com.clearpay.coin.controller.ErrorResponse.GENERAL_ERRORS;
-
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
-@RequestMapping(value = "/transaction", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/transfer", produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
-public class TransactionController {
+public class TransferController {
 
-    final TransactionRepository repository;
+    private final TransferService transferService;
 
     @Autowired
-    public TransactionController(TransactionRepository repository) {
-        this.repository = repository;
+    public TransferController(TransferService service) {
+        this.transferService = service;
     }
 
 
     @PostMapping
-    public ResponseEntity<List<User>> doTransaction(@RequestBody @Valid TransactionRequest request) {
+    public ResponseEntity<List<User>> doTransfer(@RequestBody @Valid TransferRequest request) {
         log.debug("Performing transfer between '{}' and '{}'", request.getSenderWalletId(), request.getRecipientWalletId());
-        List<User> updatedUsers = repository.perform(request);
+        List<User> updatedUsers = transferService.transfer(request);
         return new ResponseEntity<>(updatedUsers, HttpStatus.OK);
     }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> notFoundHandler(NotFoundException ex) {
         log.debug("Returning not found response '{}'", ex.getMessage());
-        return new ResponseEntity<>(new ErrorResponse(Map.of(GENERAL_ERRORS, List.of(ex.getMessage()))), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ErrorResponse(Map.of(ex.getFieldName(), List.of(ex.getMessage()))), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(LowBalanceException.class)
-    public ResponseEntity<ErrorResponse> lowBalanceHandler(LowBalanceException ex) {
-        log.debug("Returning low balance response '{}'", ex.getMessage());
-        return new ResponseEntity<>(new ErrorResponse(Map.of(GENERAL_ERRORS, List.of(ex.getMessage()))), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(TransferException.class)
+    public ResponseEntity<ErrorResponse> transferFailedHandler(TransferException ex) {
+        log.debug("Returning 'bad request' response '{}'", ex.getMessage());
+        return new ResponseEntity<>(new ErrorResponse(Map.of(ex.getFieldName(), List.of(ex.getMessage()))), HttpStatus.BAD_REQUEST);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

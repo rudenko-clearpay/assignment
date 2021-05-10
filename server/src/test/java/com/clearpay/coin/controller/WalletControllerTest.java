@@ -50,7 +50,7 @@ class WalletControllerTest {
 
     @Test
     @DisplayName("Should return wallets list when user was found")
-    public void successTransactionResponse() throws JsonProcessingException {
+    public void successTransferResponse() throws JsonProcessingException {
         List<Wallet> expected = List.of(wallet11, wallet12);
         when(repository.findById(any())).thenReturn(Optional.of(user1));
         String result = this.restTemplate.getForObject(URL, String.class);
