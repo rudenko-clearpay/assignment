@@ -30,7 +30,7 @@ public class TransferServiceImpl implements TransferService {
     @Override
     public List&lt;User&gt; transfer(TransferRequest transferRequest) {
 <span class="fc bfc" id="L32" title="All 2 branches covered.">        if(transferRequest.getRecipientWalletId().equals(transferRequest.getSenderWalletId())) {</span>
-<span class="fc" id="L33">            throw new TransferException(&quot;Should not be a different wallet&quot;, TransferRequestField.RECIPIENT);</span>
+<span class="fc" id="L33">            throw new TransferException(&quot;Should be a different wallet&quot;, TransferRequestField.RECIPIENT);</span>
         }
 
 <span class="fc" id="L36">        return retryWrapper.supply(() -&gt; {</span>
