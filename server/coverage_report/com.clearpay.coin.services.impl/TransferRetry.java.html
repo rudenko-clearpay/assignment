@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 
     @Override
     public List&lt;User&gt; supply(Supplier&lt;List&lt;User&gt;&gt; codeToRetry, Integer maxTries) {
-<span class="fc" id="L21">        return supply(codeToRetry, maxTries, 0);</span>
+<span class="fc" id="L21">        return supply(codeToRetry, maxTries, 1);</span>
     }
 
     public List&lt;User&gt; supply(Supplier&lt;List&lt;User&gt;&gt; codeToRetry, Integer maxTries, Integer tryN) {
