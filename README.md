@@ -11,7 +11,7 @@
 ```
 1. Install and run MongoDB locally
 2. cd server
-   mvn spring-boot:run -Dspring-boot.run.profiles=test -f pom.xml
+   mvn spring-boot:run -Dspring-boot.run.profiles=e2e-testing -f pom.xml
 3. cd client 
    yarn
    yarn run start
