@@ -1,5 +1,5 @@
 export const transfer = async (request) => {
-    return fetch(`http://localhost:8080/transaction`,
+    return fetch(`http://localhost:8080/transfer`,
         {
             method: "POST",
             body: JSON.stringify(request),

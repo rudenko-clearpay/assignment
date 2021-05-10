@@ -27,13 +27,13 @@ const TransferSection = (props) => {
     };
 
     const onSubmit = async () => {
-        const transaction = {
+        const transferRequest = {
             senderWalletId: senderWalletId,
             recipientWalletId: recipientWalletId,
             amount: amount
         }
 
-        const response = await transfer(transaction);
+        const response = await transfer(transferRequest);
         if (response.status === 200) {
             dispatch(updateUsers(response))
         } else {
