@@ -43,6 +43,7 @@ const TransferSection = (props) => {
 
     const onFieldChange = (e, fieldName) => {
         errors[fieldName] = null;
+        errors["formErrors"] = null;
         setErrors(errors);
         fieldsMapping[fieldName](e.target.value);
     }
