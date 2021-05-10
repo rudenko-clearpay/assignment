@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TransferServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">clearpay-coin-api-server</a> &gt; <a href="index.source.html" class="el_package">com.clearpay.coin.services.impl</a> &gt; <span class="el_source">TransferServiceImpl.java</span></div><h1>TransferServiceImpl.java</h1><pre class="source lang-java linenums">package com.clearpay.coin.services.impl;
+
+import com.clearpay.coin.exceptions.NotFoundException;
+import com.clearpay.coin.exceptions.TransferException;
+import com.clearpay.coin.model.TransferRequest;
+import com.clearpay.coin.model.TransferRequestField;
+import com.clearpay.coin.model.User;
+import com.clearpay.coin.model.Wallet;
+import com.clearpay.coin.repository.UserRepository;
+import com.clearpay.coin.services.SupplierRetry;
+import com.clearpay.coin.services.TransferService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+@Service
+public class TransferServiceImpl implements TransferService {
+    public static final int MAX_RETRIES = 3;
+    private final UserRepository userRepository;
+    private final SupplierRetry&lt;List&lt;User&gt;&gt; retryWrapper;
+
+    @Autowired
+<span class="fc" id="L25">    public TransferServiceImpl(UserRepository userRepository, SupplierRetry&lt;List&lt;User&gt;&gt; retryWrapper) {</span>
+<span class="fc" id="L26">        this.userRepository = userRepository;</span>
+<span class="fc" id="L27">        this.retryWrapper = retryWrapper;</span>
+<span class="fc" id="L28">    }</span>
+
+    @Override
+    public List&lt;User&gt; transfer(TransferRequest transferRequest) {
+<span class="fc bfc" id="L32" title="All 2 branches covered.">        if(transferRequest.getRecipientWalletId().equals(transferRequest.getSenderWalletId())) {</span>
+<span class="fc" id="L33">            throw new TransferException(&quot;Should not be a different wallet&quot;, TransferRequestField.RECIPIENT);</span>
+        }
+
+<span class="fc" id="L36">        return retryWrapper.supply(() -&gt; {</span>
+<span class="fc" id="L37">            User sender = fetchUser(transferRequest.getSenderWalletId(), TransferRequestField.SENDER);</span>
+<span class="fc" id="L38">            Wallet senderWallet = getWallet(sender, transferRequest.getSenderWalletId(), TransferRequestField.SENDER);</span>
+<span class="fc" id="L39">            this.validateSenderBalance(senderWallet, transferRequest.getAmount());</span>
+
+<span class="fc" id="L41">            boolean isWalletsOwnerSameUser = sender.getWallets().stream().anyMatch(wallet -&gt; wallet.getId().equals(transferRequest.getRecipientWalletId()));</span>
+
+<span class="fc bfc" id="L43" title="All 2 branches covered.">            User recipient = isWalletsOwnerSameUser ? sender : fetchUser(transferRequest.getRecipientWalletId(), TransferRequestField.RECIPIENT);</span>
+<span class="fc" id="L44">            Wallet recipientWallet = getWallet(recipient, transferRequest.getRecipientWalletId(), TransferRequestField.RECIPIENT);</span>
+
+<span class="fc" id="L46">            this.transferCoins(senderWallet, recipientWallet, transferRequest.getAmount());</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">            return userRepository.saveAll(isWalletsOwnerSameUser ? List.of(sender) : List.of(sender, recipient));</span>
+<span class="fc" id="L48">        }, MAX_RETRIES);</span>
+    }
+
+    private User fetchUser(String userId, TransferRequestField field) {
+<span class="fc" id="L52">        return userRepository.findByWallets_Id(userId)</span>
+<span class="fc" id="L53">                .orElseThrow(() -&gt; new NotFoundException(&quot;User with wallet '&quot; + userId + &quot;' was not found.&quot;, field));</span>
+    }
+
+    private Wallet getWallet(User sender, String walletId, TransferRequestField field) {
+<span class="fc" id="L57">        return sender.getWallets().stream()</span>
+<span class="fc" id="L58">                .filter(w -&gt; w.getId().equals(walletId)).findFirst()</span>
+<span class="pc" id="L59">                .orElseThrow(() -&gt; new NotFoundException(&quot;Wallet with id '&quot; + walletId + &quot;' was not found.&quot;, field));</span>
+    }
+
+
+    private void transferCoins(Wallet from, Wallet to, String amount) {
+<span class="fc" id="L64">        BigDecimal transferAmount = new BigDecimal(amount);</span>
+<span class="fc" id="L65">        BigDecimal newSenderBalance = new BigDecimal(from.getBalance()).subtract(transferAmount);</span>
+
+<span class="fc" id="L67">        String newRecipientBalance = new BigDecimal(to.getBalance()).add(transferAmount).stripTrailingZeros().toPlainString();</span>
+
+<span class="fc" id="L69">        from.setBalance(newSenderBalance.stripTrailingZeros().toPlainString());</span>
+<span class="fc" id="L70">        to.setBalance(newRecipientBalance);</span>
+<span class="fc" id="L71">    }</span>
+
+    private void validateSenderBalance(Wallet sourceWallet, String amount) {
+<span class="fc" id="L74">        BigDecimal transferAmount = new BigDecimal(amount);</span>
+<span class="fc" id="L75">        BigDecimal newSenderBalance = new BigDecimal(sourceWallet.getBalance()).subtract(transferAmount);</span>
+
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        if (newSenderBalance.floatValue() &lt; 0) {</span>
+<span class="fc" id="L78">            throw new TransferException(&quot;Wallet '&quot; + sourceWallet.getId() + &quot;' has insufficient balance for the transfer.&quot;, TransferRequestField.AMOUNT);</span>
+        }
+<span class="fc" id="L80">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
