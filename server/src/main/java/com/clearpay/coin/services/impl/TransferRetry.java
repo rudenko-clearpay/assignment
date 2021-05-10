@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.function.Supplier;
 
+/**
+ * Retries Persistence operation that potentially could fail because of Optimistic Lock.
+ */
 @Slf4j
 @Component
 public class TransferRetry implements SupplierRetry<List<User>> {
