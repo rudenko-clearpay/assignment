@@ -18,7 +18,6 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    // подчищаем после завершения
     unmountComponentAtNode(container);
     container.remove();
     container = null;
@@ -41,14 +40,14 @@ it("Header links change pages", () => {
         usersPageLink.dispatchEvent(new MouseEvent("click", {bubbles: true}));
     });
 
-    expect(document.body.textContent).toContain('Showing 0 of 0 users');
+    expect(document.body.textContent).toContain('Clearpay CoinHomeUsersLogged outShowing 0 of  usersNo users foundLoad More');
 
     act(() => {
         const usersPageLink = document.querySelector('#home_nav_link');
         usersPageLink.dispatchEvent(new MouseEvent("click", {bubbles: true}));
     });
 
-    expect(document.body.textContent).toContain('Content');
+    expect(document.body.textContent).toContain('Clearpay CoinHomeUsersLogged outWelcome to the ClearPay Coin!');
 });
 
 it("Login btn click dispatches event", () => {
@@ -69,12 +68,12 @@ it("Login btn click dispatches event", () => {
     });
 
 
-    expect(document.body.textContent).toContain('Showing 0 of 0 users');
+    expect(document.body.textContent).toContain('Clearpay CoinHomeUsersLogged outShowing 0 of  usersNo users foundLoad More');
 
     act(() => {
         const usersPageLink = document.querySelector('#home_nav_link');
         usersPageLink.dispatchEvent(new MouseEvent("click", {bubbles: true}));
     });
 
-    expect(document.body.textContent).toContain('Content');
+    expect(document.body.textContent).toContain('Clearpay CoinHomeUsersLogged outWelcome to the ClearPay Coin!');
 });

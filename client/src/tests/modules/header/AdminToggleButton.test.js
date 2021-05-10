@@ -34,7 +34,7 @@ it("Login btn click dispatches event", () => {
                 </MemoryRouter>
             </Provider>, container);
     });
-    expect(container.textContent).toContain("Login mode");
+    expect(container.textContent).toContain("Logged out");
 
     act(() => {
         const usersPageLink = document.querySelector('#login_toggle_btn');

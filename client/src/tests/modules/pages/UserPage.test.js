@@ -94,6 +94,6 @@ it("User page loads users on mount", () => {
     let usersListHeader = container.querySelector('#users_list_header');
     let usersList = container.querySelector('#users_list');
 
-    expect(usersList.children.length).toBe(2);
+    expect(usersList.children.length).toBe(3);
     expect(usersListHeader.textContent).toBe("Showing 2 of 2 users");
 });
