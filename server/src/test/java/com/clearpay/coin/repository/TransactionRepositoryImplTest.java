@@ -136,6 +136,6 @@ class TransferRepositoryImplTest {
 
         Executable operation = () -> transferService.transfer(new TransferRequest(WALLET_U1_2, WALLET_U2_2, "100"));
         assertThrows(IllegalStateException.class, operation);
-        verify(userRepository, times(MAX_RETRIES + 1)).saveAll(any());
+        verify(userRepository, times(MAX_RETRIES)).saveAll(any());
     }
 }

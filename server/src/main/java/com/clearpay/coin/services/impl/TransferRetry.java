@@ -18,7 +18,7 @@ public class TransferRetry implements SupplierRetry<List<User>> {
 
     @Override
     public List<User> supply(Supplier<List<User>> codeToRetry, Integer maxTries) {
-        return supply(codeToRetry, maxTries, 0);
+        return supply(codeToRetry, maxTries, 1);
     }
 
     public List<User> supply(Supplier<List<User>> codeToRetry, Integer maxTries, Integer tryN) {
