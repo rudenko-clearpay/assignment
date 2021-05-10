@@ -9,6 +9,5 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 public class ErrorResponse {
-    public static final String GENERAL_ERRORS = "formErrors";
     Map<String, List<String>> errors;
 }

@@ -30,7 +30,7 @@ public class TransferServiceImpl implements TransferService {
     @Override
     public List<User> transfer(TransferRequest transferRequest) {
         if(transferRequest.getRecipientWalletId().equals(transferRequest.getSenderWalletId())) {
-            throw new TransferException("Should not be a different wallet", TransferRequestField.RECIPIENT);
+            throw new TransferException("Should be a different wallet", TransferRequestField.RECIPIENT);
         }
 
         return retryWrapper.supply(() -> {

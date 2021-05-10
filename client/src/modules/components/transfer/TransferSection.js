@@ -5,7 +5,6 @@ import {transfer} from "../../../api/transfers";
 import {useDispatch} from "react-redux";
 import {updateUsers} from "../../../store/actions";
 import FieldControl from "./FieldControl";
-import FormErrors from "./FormErrors";
 
 
 const TransferSection = (props) => {
@@ -43,7 +42,6 @@ const TransferSection = (props) => {
 
     const onFieldChange = (e, fieldName) => {
         errors[fieldName] = null;
-        errors["formErrors"] = null;
         setErrors(errors);
         fieldsMapping[fieldName](e.target.value);
     }
@@ -80,7 +78,6 @@ const TransferSection = (props) => {
                         </Col>
                     </Form.Row>
                 </Form>
-                <FormErrors formErrors={errors.formErrors}/>
             </Card.Body>
         </Card>
     );

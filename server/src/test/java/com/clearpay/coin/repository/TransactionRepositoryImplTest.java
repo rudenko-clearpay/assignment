@@ -83,7 +83,7 @@ class TransferRepositoryImplTest {
         Executable operation = () -> transferService.transfer(new TransferRequest(WALLET_U1_1, WALLET_U1_1, "1"));
         TransferException exception = assertThrows(TransferException.class, operation);
 
-        assertThat(exception.getMessage()).isEqualTo("Should not be a different wallet");
+        assertThat(exception.getMessage()).isEqualTo("Should be a different wallet");
 
         assertThat(user1.getWallets().get(0).getBalance()).isEqualTo("99");
         assertThat(user1.getWallets().get(1).getBalance()).isEqualTo("2000");
