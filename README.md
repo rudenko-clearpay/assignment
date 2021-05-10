@@ -3,7 +3,8 @@
 
 ## Run within docker-compose:
 ```
-docker-compose up
+1. docker-compose up
+2. Open localhost:3000 in browser
 ```
 
 ## Run locally:
